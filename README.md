@@ -1,84 +1,89 @@
-# dsh-plugin-mingli · 命理推演（Tianfu 风格 UI）
+# DSH 命理插件（dsh-plugin-mingli）
 
-DeepSeek Harness 桌面端插件。把 `mingli` 技能的三套排盘引擎（紫微斗数 / 子平八字 / 时家奇门）搬进 Web GUI，
-并做成对标 tianfu-ai.com 的完整界面：命主档案、命盘图、大运流年、奇门九宫、人生轨迹、AI 推演报告。
+DeepSeek Harness 的命理推演插件：**紫微斗数 / 子平八字 / 时家奇门** 排盘，博采多流派校正，输出带依据与置信度的结构化命盘；附 **每日黄历 + 六维运势**、**人生轨迹** 与 **推演报告**。
 
-- **纯前端计算**：`iztro` + `lunar-javascript` + `kinqimen` 在浏览器里排盘，不联网、不上传、不需要 Host RPC。
-- **Shadow DOM 隔离**：样式只用 `--dsw-alias-*` 主题 token，明暗主题自动跟随 DSH。
-- **单文件本地安装**：`link:` 到本目录，改代码后重新 `npm run build` 即可（client 产物走 HMR）。
+- 纯前端本地排盘，**不联网、不上传**任何数据（`localStorage` 存储）
+- 无外部 CDN 依赖，client bundle 自带引擎（lunar-javascript / iztro / kinqimen）
+- 只做传统文化研究与自我参照，不做医疗 / 法律 / 投资决策
+
+## 功能
+
+| 模块 | 说明 |
+|---|---|
+| 八字 | 四柱、十神、藏干、纳音、旬空、地势、日主旺衰（得令/得地/得势）、五行占比、旺衰说明 |
+| 紫微斗数 | 十二宫、主星/辅煞、四化、格局、限运、点宫详情（iztro 精确历法） |
+| 奇门遁甲 | 时家奇门转盘 + 拆补，九宫、八门九星八神、值符值使、旬首 |
+| 每日黄历 | 干支、农历、值神黑黄道、建除、宜忌、冲煞、喜财福方位、彭祖百忌、吉神凶煞 |
+| 六维运势 | 事业 / 财运 / 桃花 / 健康 / 出行 / 人际：黄历宜忌 × 本命冲合刑害 × 十神 × 喜用五行 × 神煞 双标准打分，附依据与建议 |
+| 每日存档 | 每天自动存一份黄历快照，可翻看历史日期（‹ › 或日期条），按日重算补录 |
+| 人生轨迹 | 多泳道时间轴：大运背景带、事实/里程碑/抉择/转折节点、分支 |
+| 推演报告 | 结构化报告（命主与盘面、四柱十神、旺衰五行、紫微四化、流年大运、行动建议），可复制全文 |
+
+## 安装
+
+### 方式 A：下载即用（推荐）
+
+1. 到 [Releases](https://github.com/penyy8540-bit/dsh-plugin-mingli/releases) 下载 `dsh-plugin-mingli-v0.1.0.zip` 并解压
+2. 安装到 DSH profile（路径换成你解压后的目录）：
+
+```bash
+dsh plugin --profile desktop add "<解压路径>/dsh-plugin-mingli"
+```
+
+3. 重启 / 刷新 DSH（Ctrl+R）
+
+### 方式 B：从源码构建
+
+```bash
+git clone https://github.com/penyy8540-bit/dsh-plugin-mingli.git
+cd dsh-plugin-mingli
+npm install          # 仅构建期需要
+npm run build        # 生成 lib/client.js（含引擎）与 lib/index.js
+dsh plugin --profile desktop add "$PWD"
+```
 
 ## 使用
 
-1. 打开 DSH 桌面端（更新插件后先 Ctrl+R 刷新一次）。入口：
-   - **会话视图页签「命理」**（推荐）：每个会话面板的「对话 / 轨迹」旁，点开是**三栏工作台**——左侧命主/收藏/历史提问，中间对话与提问输入，右侧八字/紫微/奇门/命途/报告盘面（Tianfu 风格）
-   - 会话标题栏右侧的「命」按钮 / 输入框旁的「命理」chip：打开右栏「命理」工作台（每日反馈卡）
-   - 右下角金色「命盘」胶囊：完整命盘浮窗
-2. 左栏「新建命主」填姓名/性别/公历生日/出生时间/出生地/经度。
-3. 数据存浏览器 `localStorage`（`mingli.*`），纯本地排盘，不联网。
-   - **命盘**：四柱（十神/藏干/纳音/旬空）、日主旺衰、五行条形+雷达、神煞、刑冲合害
-   - **紫微**：4×4 十二宫命盘，主星亮度 + 四化徽标，点宫看详情（大限、长生、博士…）
-   - **大运流年**：大运色带 + 11 年流年刻度，当前年高亮
-   - **奇门**：按当前时间起局 + 问事关键词 → 九宫（天地盘干/九星/八门/八神/值符值使/用神）
-   - **人生轨迹**：录入过往事件 → 多泳道时间线（大运色带 + 假设分支）→ 命途回溯
-   - **报告**：结构化报告草稿 + 「复制给 DeepSeek 分析」提示词
-4. 数据存在浏览器 `localStorage`（`mingli.*`），清掉即重置。
+刷新后有三个入口：
+
+1. **会话视图页签「命理」**（主入口）：任一会话顶部 `对话 | 轨迹 | 命理`，点「命理」打开三栏工作台
+   - 左：命主档案（新建/切换）
+   - 中：每日黄历 + 六维运势 + 每日存档日期条
+   - 右：黄历 / 八字 / 紫微 / 奇门 / 命途 / 报告 六个页签
+2. **右下角「命盘」胶囊 / 输入框「命」chip / 标题栏「命」按钮**：优先跳到「命理」页签；找不到时打开三栏浮层
+3. **右侧栏「命理」tab**：窄版每日反馈卡（适合常驻右栏）
 
 ## 开发
 
-```powershell
-cd "C:\Users\Administrator\Desktop\deepseek 插件开发\plugins\dsh-plugin-mingli"
-npm install          # 首次
-npm run build        # → lib/client.js（生产 bundle）+ lib/index.js + preview/
-npm run parity       # JS 引擎 vs Python 引擎（mingli 技能）逐字段对照
-npm run verify       # puppeteer 驱动生产 bundle：6 个 tab 截图 + 交互 + console 错误
-npm run shot -- --page harness.html --out out/harness.png   # ModuleLoader harness 截图
+```bash
+npm run build     # esbuild → lib/client.js（ModuleLoader 包装）、lib/index.js、preview/harness.html
+npm run serve     # 本地静态服务预览
+npm run shot      # puppeteer 截图（harness）
+npm run verify    # E2E：打开工作台 → 遍历 6 个页签 → 紫微点宫 → 关闭 → 0 console 错误
+npm run parity    # 引擎一致性（JS vs Python 基准），105 项
 ```
 
-## 验证状态（2026-10-26）
-
-| 验证 | 结果 |
-|---|---|
-| `npm run build` | exit 0，client bundle 1.28 MB，无远程加载调用 |
-| `npm run parity` | **105 项检查 0 差异**（八字/紫微/奇门 vs Python 已验证实现） |
-| `npm run verify` | **PASS**：6 个 tab 全部渲染、紫微点宫切换详情、关闭回入口、0 console 错误 |
-| ModuleLoader harness | 生产 `lib/client.js` 经 loader 模拟装载后正常注册 `shell.overlay` 并渲染 |
-| 真实 GUI | 已安装进 `desktop` profile（`dsh plugin --profile desktop add <path>`），bundle 由 HMR 重组加载 |
-
-验收截图在 `out/verify/`：命盘 / 紫微 / 大运流年 / 奇门 / 人生轨迹 / 报告 / 紫微-点宫详情。
-
-### 目录
+目录：
 
 ```
-src/
-  client-entry.jsx   ModuleLoader 包装 + shell.overlay 槽注册
-  app/               UI 外壳：Launcher / App / BirthForm / ProfileList / ReportTab
-  engines/           bazi.js / ziwei.js / qimen.js（浏览器端排盘）
-  render/            ChartBazi / ChartZiwei / ChartQimen / ChartDayun
-  timeline/          人生轨迹 model + SVG + Tab
-  store.js           localStorage 档案/轨迹
-  ui/theme.css       主题 token 与基础控件
-tools/               build / parity / shot
-preview/             离线预览壳 + ModuleLoader harness
-docs/                插件契约与 fixtures
+src/engines/     八字 / 紫微 / 奇门 / 每日黄历引擎（纯函数）
+src/render/      盘面组件（八字、紫微、奇门、大运）
+src/timeline/    人生轨迹 SVG 时间轴
+src/app/         工作台三栏页、每日黄历 tab、报告、浮层
+tools/           build / verify / shot / parity
+docs/            插件契约、方案文档、黄金样例
 ```
 
-### 安装到 profile
+## 数据与隐私
 
-```powershell
-& "C:\Users\Administrator\AppData\Local\Programs\DeepSeek Harness\resources\runtime\cli\bin\dsh.cmd" `
-  plugin --profile desktop add "<本目录绝对路径>"
-```
+- 档案、每日黄历存档、轨迹节点都存浏览器 `localStorage`（`mingli.*`）
+- 排盘在本地完成，不发网络请求
+- 卸载插件不会自动清数据；需要清除时在 DevTools 里删除 `mingli.*` 键
 
-新增 bundle 由 HMR 实时重组，无需重启；覆盖已装 Host 代码时才需要完全退出 DSH 重开。
+## 免责声明
 
-## 设计边界
+本项目基于传统命理规则做程序化推演，结果仅供文化研究与自我参照，不构成任何医疗、法律、投资或人生决策建议。
 
-- 只做传统文化研究与结构化推演，不做医疗/法律/投资决策，不承诺改运。
-- 盘面全部来自本地引擎；报告草稿只复述盘面事实，判断交给对话里的 DeepSeek。
-- 不引入第三方图表库；SVG 全部手写，保证离线与主题一致性。
+## License
 
-## 已知限制
-
-- 公历输入（农历转换在 v0.2 计划内）；奇门只实现拆补法·转盘。
-- 晚子时（23:00 后）默认不换日；紫微年界按正月初一，八字按立春。
-- 报告 tab 是草稿生成 + 复制提示词，不直接调用模型（避免与当前会话上下文互相干扰）。
+MIT（如需正式使用请补充 LICENSE 文件）
