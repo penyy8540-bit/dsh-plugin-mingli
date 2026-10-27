@@ -1,0 +1,4 @@
+# Adds only the Mingli panel row; does not replace any official DSH component.
+- insert:
+    - id: mingli
+      name: dsh-plugin-mingli

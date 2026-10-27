@@ -1,0 +1,153 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mingli module-loader harness</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #f2f3f5; }
+      #mount { position: fixed; inset: 0; }
+      #harness-error {
+        position: fixed; left: 12px; top: 12px; z-index: 99; max-width: 70vw;
+        background: #2b1d1d; color: #ffb4a8; border: 1px solid #7a3b34; border-radius: 8px;
+        padding: 10px 14px; font: 12px/1.6 ui-monospace, Consolas, monospace; white-space: pre-wrap;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <pre id="harness-error"></pre>
+    <div id="mount"></div>
+    <script>
+      // Seed one profile so the screenshot exercises the real engines, not the empty state.
+      // A test can pre-install window.__MINGLI_SEED__ (e.g. via puppeteer evaluateOnNewDocument).
+      try {
+        const seed = window.__MINGLI_SEED__ || {
+          profiles: [{
+            id: 'p_harness',
+            name: '示例命主',
+            gender: 'male',
+            solar: '1990-05-15T10:30',
+            birthplace: '北京',
+            longitude: 116.4,
+            use_true_solar: true,
+            created_at: '2026-10-26T17:40:00',
+            updated_at: '2026-10-26T17:40:00',
+          }],
+          activeId: 'p_harness',
+        };
+        localStorage.setItem('mingli.profiles.v1', JSON.stringify(seed));
+        // ?demo=1 seeds a few question nodes so screenshots show a populated history.
+        if (['1','2','3'].includes(new URLSearchParams(location.search).get('demo'))) {
+          const demo = new URLSearchParams(location.search).get('demo');
+          const today = new Date().toISOString();
+          const nodes = [
+            { id: 'q_demo1', question: '这个月适合签约吗？', answerSummary: '生门落艮八，值使杜门；倾向可成但推进有阻滞，建议先备齐材料。', tags: ['择时', '事业'], favorite: true, createdAt: today, solar: today.slice(0, 10) },
+            { id: 'q_demo2', question: '今年换工作合适吗？', answerSummary: '流年丙午冲日支，变动多；宜在上半年落定，避免年底仓促。', tags: ['事业'], favorite: false, createdAt: today, solar: today.slice(0, 10) },
+            { id: 'q_demo3', question: '和对方的合盘如何？', answerSummary: '夫妻宫武曲化权，互动偏强势；需要明确边界与沟通节奏。', tags: ['感情', '合盘'], favorite: false, createdAt: today, solar: today.slice(0, 10) },
+          ];
+          const now = new Date();
+          const pad = (value) => String(value).padStart(2, '0');
+          const dayKey = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+          const dailyNode = {
+            id: 'q_daily', question: `今日反馈 · ${dayKey}`, answerSummary: '',
+            tags: ['每日反馈'], favorite: false, createdAt: today, solar: dayKey, sessionId: 's_demo_session',
+          };
+          const seeded = demo === '3' ? [dailyNode, ...nodes.map((node) => ({ ...node, answerSummary: '' }))] : nodes;
+          localStorage.setItem('mingli.nodes.' + seed.activeId, JSON.stringify({
+            version: 1,
+            nodes: demo === '2' ? nodes.map((node) => ({ ...node, answerSummary: '' })) : seeded,
+          }));
+        }
+      } catch (error) { /* storage blocked: harness falls back to empty state */ }
+    </script>
+    <script src="./harness-lib.js"></script>
+    <script>
+      const errorBox = document.getElementById('harness-error');
+      const report = (error) => {
+        errorBox.style.display = 'block';
+        errorBox.textContent = 'HARNESS ERROR: ' + (error && (error.stack || error.message) || error);
+        document.title = 'HARNESS ERROR';
+      };
+      window.addEventListener('error', (event) => report(event.error || event.message));
+
+      // Fake Session props for ?session=1: proves transcript extraction + answer
+      // backfill without a real host session.
+      (function seedSession() {
+        const now = new Date();
+        const pad = (value) => String(value).padStart(2, '0');
+        const dayKey = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+        const human = (seq, text) => ({ kind: 'user', anchorSeq: seq, data: { state: { kind: 'user', seq, content: [{ type: 'text', text }] } } });
+        const bot = (seq, text) => ({ kind: 'assistant-step', anchorSeq: seq, data: { step: { content: [{ type: 'text', text }] } } });
+        const nodes = new Map([
+          ['n1', human(2, '这个月适合签约吗？')],
+          ['n2', bot(3, '生门落艮八，可成但有阻滞；建议先备齐材料、避开午后。')],
+          ['n3', human(6, '今年换工作合适吗？')],
+          ['n4', bot(7, '流年丙午冲日支，变动偏多；宜上半年落定，避免年底仓促。')],
+          ['n5', human(9, `请依据盘面与今日黄历给出每日反馈。\n今日反馈 · ${dayKey}`)],
+          ['n6', bot(10, '今日主题：守成。宜整理资料与复盘，避免冲动签约；午后东方位走动可借势。')],
+        ]);
+        window.__MINGLI_CHAT__ = { nodes };
+        window.__MINGLI_SESSION_PROPS__ = {
+          sessionId: 's_demo_session',
+          inputActions: { setDraft() {}, submit() {} },
+          useChat: (selector) => (typeof selector === 'function' ? selector(window.__MINGLI_CHAT__) : window.__MINGLI_CHAT__),
+        };
+      })();
+      // Minimal stand-in for DSH's client ModuleLoader + slot registry.
+      const registrations = [];
+      window.__ModuleLoader__ = {
+        load({ id, factory }) {
+          try {
+            const plugin = factory((name) => {
+              const key = String(name);
+              if (!(key in window.__LIB__)) throw new Error('unresolved platform module: ' + key);
+              return window.__LIB__[key];
+            });
+            window.__MINGLI_PLUGIN_ID__ = id;
+            const ctx = {
+              slots: {
+                inject(owner, callback) { return callback(); },
+                register(options, Component) {
+                  registrations.push({ options, Component });
+                  return () => {};
+                },
+              },
+            };
+            plugin.apply(ctx);
+            window.__MINGLI_SLOTS__ = registrations.map((r) => r.options);
+            if (!registrations.length) throw new Error('plugin registered no slots');
+            const wanted = new URLSearchParams(location.search).get('entry') || 'overlay';
+            const slotFor = { overlay: 'shell.overlay', view: 'conversation.view', dock: 'conversation.composer.dock', workbench: 'sidebar.right.pane.tab' };
+            const target = registrations.find((r) => r.options.name === (slotFor[wanted] || 'shell.overlay')) || registrations[0];
+            const root = window.ReactDOMClient.createRoot(document.getElementById('mount'));
+            const withSession = new URLSearchParams(location.search).get('session') === '1';
+            const sessionProps = withSession ? window.__MINGLI_SESSION_PROPS__ : {};
+            root.render(window.React.createElement(target.Component, sessionProps));
+            if (wanted !== 'overlay') {
+              window.__MINGLI_OPENED__ = true;
+              return;
+            }
+            // Open the panel by clicking the production launcher inside the shadow root.
+            setTimeout(() => {
+              try {
+                const host = document.querySelector('#mount > div');
+                const launcher = host && host.shadowRoot && host.shadowRoot.querySelector('.ml-launcher');
+                if (launcher) launcher.click();
+                window.__MINGLI_OPENED__ = Boolean(launcher);
+              } catch (error) {
+                window.__MINGLI_OPENED__ = false;
+              }
+            }, 500);
+          } catch (error) {
+            report(error);
+            throw error;
+          }
+        },
+      };
+    </script>
+    <script src="../lib/client.js"></script>
+  </body>
+</html>
+
+

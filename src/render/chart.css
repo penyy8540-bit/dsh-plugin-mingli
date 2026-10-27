@@ -1,0 +1,1018 @@
+/* ==========================================================================
+   dsh-plugin-mingli · chart.css
+   Charts are rendered inside the plugin Shadow DOM; every class is ml-*
+   prefixed and colors resolve from the --ml-* tokens declared in ui/theme.css.
+   No external fonts, no network, no chart library.
+   ========================================================================== */
+
+/* ---------- shell -------------------------------------------------------- */
+.ml-chart {
+  position: relative;
+  padding: 16px 18px 18px;
+  background: var(--ml-surface);
+  border: 1px solid var(--ml-line);
+  border-radius: var(--ml-radius);
+  color: var(--ml-ink);
+  font-family: var(--dsw-font-family, "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.ml-chart + .ml-chart { margin-top: 16px; }
+.ml-chart * { box-sizing: border-box; }
+
+.ml-chart-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 8px;
+}
+.ml-chart-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-family: var(--ml-serif);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--ml-ink);
+}
+.ml-chart-title::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--ml-gold);
+}
+.ml-chart-sub {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ml-tertiary);
+}
+.ml-chart-tail {
+  margin-left: auto;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ml-tertiary);
+  white-space: nowrap;
+}
+.ml-chart-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0 0 14px;
+  padding: 6px 0 11px;
+  border-bottom: 1px solid var(--ml-hairline);
+  font-size: 11.5px;
+  color: var(--ml-muted);
+}
+.ml-chart-meta .ml-k { margin-right: 4px; letter-spacing: 0.06em; color: var(--ml-tertiary); }
+.ml-chart-meta b { font-weight: 600; color: var(--ml-ink); }
+.ml-chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 116px;
+  border: 1px dashed var(--ml-line);
+  border-radius: 10px;
+  color: var(--ml-tertiary);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  background: var(--ml-paper-2);
+}
+
+.ml-block-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-family: var(--ml-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--ml-ink);
+}
+.ml-block-title::before {
+  content: "";
+  width: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ml-gold);
+}
+.ml-block-title span {
+  font-family: var(--dsw-font-family, "Noto Sans SC", sans-serif);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  color: var(--ml-tertiary);
+}
+.ml-note {
+  margin: 8px 0 0;
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--ml-tertiary);
+}
+.ml-chart .ml-muted { color: var(--ml-muted); }
+.ml-chart .ml-gold-text { color: var(--ml-gold); }
+
+/* ---------- wuxing colors (五行) ---------------------------------------- */
+.ml-wx-mu { color: var(--ml-jade); }
+.ml-wx-huo { color: var(--ml-cinnabar); }
+.ml-wx-tu { color: var(--ml-brown); }
+.ml-wx-jin { color: var(--ml-gold); }
+.ml-wx-shui { color: var(--ml-indigo); }
+.ml-wx-void { color: var(--ml-cinnabar); }
+
+/* ---------- chips ------------------------------------------------------- */
+.ml-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ml-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 2px 9px 3px;
+  border: 1px solid var(--ml-line);
+  border-radius: 999px;
+  background: var(--ml-paper-2);
+  font-size: 11.5px;
+  color: var(--ml-ink);
+  white-space: nowrap;
+}
+.ml-chip i {
+  font-style: normal;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--ml-tertiary);
+}
+.ml-chip--gold { border-color: var(--ml-gold-line); background: var(--ml-gold-soft); color: var(--ml-gold); }
+.ml-chip--jade { border-color: color-mix(in srgb, var(--ml-jade) 38%, transparent); background: color-mix(in srgb, var(--ml-jade) 8%, transparent); color: var(--ml-jade); }
+.ml-chip--red { border-color: color-mix(in srgb, var(--ml-cinnabar) 38%, transparent); background: color-mix(in srgb, var(--ml-cinnabar) 8%, transparent); color: var(--ml-cinnabar); }
+.ml-chip--indigo { border-color: color-mix(in srgb, var(--ml-indigo) 38%, transparent); background: color-mix(in srgb, var(--ml-indigo) 8%, transparent); color: var(--ml-indigo); }
+.ml-chip--violet { border-color: color-mix(in srgb, var(--ml-violet) 38%, transparent); background: color-mix(in srgb, var(--ml-violet) 8%, transparent); color: var(--ml-violet); }
+.ml-chip--brown { border-color: color-mix(in srgb, var(--ml-brown) 38%, transparent); background: color-mix(in srgb, var(--ml-brown) 8%, transparent); color: var(--ml-brown); }
+
+/* ==========================================================================
+   ChartBazi · 四柱盘
+   ========================================================================== */
+.ml-bz-table {
+  display: grid;
+  grid-template-columns: 52px repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--ml-line);
+  border-radius: 11px;
+  overflow: hidden;
+  background: var(--ml-surface);
+}
+.ml-bz-table > * { border-bottom: 1px solid var(--ml-hairline); }
+.ml-bz-table > *:nth-child(5n) { border-right: 0; }
+.ml-bz-table > *:nth-last-child(-n + 5) { border-bottom: 0; }
+.ml-bz-corner { background: var(--ml-paper-2); }
+.ml-bz-head {
+  position: relative;
+  padding: 8px 10px 7px;
+  border-right: 1px solid var(--ml-hairline);
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ml-muted);
+  background: var(--ml-paper-2);
+}
+.ml-bz-rowlabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 2px;
+  border-right: 1px solid var(--ml-line);
+  background: var(--ml-paper-2);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--ml-tertiary);
+}
+.ml-bz-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 0;
+  padding: 6px 8px;
+  border-right: 1px solid var(--ml-hairline);
+  text-align: center;
+}
+.ml-bz-col-day {
+  background: color-mix(in srgb, var(--ml-gold) 7%, transparent);
+  box-shadow: inset 1px 0 0 var(--ml-gold-line), inset -1px 0 0 var(--ml-gold-line);
+}
+.ml-bz-head.ml-bz-col-day { background: var(--ml-gold-soft); color: var(--ml-gold); }
+.ml-bz-daytag {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  padding: 0 4px;
+  border: 1px solid var(--ml-gold-line);
+  border-radius: 3px;
+  background: var(--ml-surface);
+  font-size: 8.5px;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  color: var(--ml-gold);
+}
+.ml-bz-ss { font-size: 12px; color: var(--ml-muted); letter-spacing: 0.04em; }
+.ml-bz-ss--day { color: var(--ml-gold); }
+.ml-bz-gz {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  line-height: 1.05;
+}
+.ml-bz-ch {
+  font-family: var(--ml-serif);
+  font-size: 31px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.ml-bz-ch--zhi { font-size: 28px; }
+.ml-bz-yinyang {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding-bottom: 4px;
+  font-size: 9.5px;
+  line-height: 1.2;
+  color: var(--ml-tertiary);
+}
+.ml-bz-hide {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px 9px;
+}
+.ml-bz-hide-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.25;
+}
+.ml-bz-hide-item b { font-family: var(--ml-serif); font-size: 13px; font-weight: 600; }
+.ml-bz-hide-item i { font-style: normal; font-size: 9px; color: var(--ml-tertiary); letter-spacing: 0.02em; }
+.ml-bz-mini { font-size: 11px; color: var(--ml-muted); letter-spacing: 0.02em; }
+.ml-bz-mini--void { color: var(--ml-cinnabar); }
+
+/* 日主旺衰 */
+.ml-bz-strength {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ml-hairline);
+}
+.ml-bz-strength-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  margin-bottom: 10px;
+}
+.ml-bz-dm { font-family: var(--ml-serif); font-size: 13px; color: var(--ml-ink); }
+.ml-bz-dm b { font-size: 19px; font-weight: 600; letter-spacing: 0.02em; }
+.ml-bz-level {
+  padding: 1px 9px 2px;
+  border: 1px solid var(--ml-gold-line);
+  border-radius: 999px;
+  background: var(--ml-gold-soft);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--ml-gold);
+}
+.ml-bz-score {
+  margin-left: auto;
+  font-family: var(--ml-serif);
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ml-ink);
+}
+.ml-bz-score i { font-style: normal; margin-left: 2px; font-size: 10.5px; color: var(--ml-tertiary); }
+.ml-bz-zones {
+  position: relative;
+  display: flex;
+  height: 25px;
+  border: 1px solid var(--ml-hairline);
+  border-radius: 999px;
+  background: var(--ml-paper-2);
+}
+.ml-bz-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--ml-hairline);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--ml-tertiary);
+}
+.ml-bz-zone:last-of-type { border-right: 0; }
+.ml-bz-zone.is-current {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ml-gold) 20%, transparent);
+  color: var(--ml-ink);
+  font-weight: 600;
+}
+.ml-bz-marker {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--ml-gold);
+  transform: translateX(-1px);
+  box-shadow: 0 0 0 1px var(--ml-surface);
+}
+.ml-bz-marker::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--ml-surface);
+  border-radius: 50%;
+  background: var(--ml-gold);
+  transform: translateX(-50%);
+}
+.ml-bz-subs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 18px;
+  margin-top: 13px;
+}
+.ml-bz-sub { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.ml-bz-sub-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ml-muted);
+}
+.ml-bz-sub-head b { font-weight: 600; color: var(--ml-ink); font-variant-numeric: tabular-nums; }
+.ml-bz-sub-track { height: 5px; border-radius: 999px; background: var(--ml-paper-2); overflow: hidden; }
+.ml-bz-sub-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--ml-gold-line), var(--ml-gold));
+}
+
+/* 五行 bars + radar */
+.ml-bz-wx {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ml-hairline);
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(220px, 0.82fr);
+  gap: 8px 24px;
+  align-items: center;
+}
+.ml-bz-wx > .ml-block-title { grid-column: 1 / -1; }
+.ml-bz-bars { display: block; width: 100%; height: auto; overflow: visible; }
+.ml-bz-radar { display: block; width: 100%; max-width: 330px; height: auto; margin: 0 auto; }
+.ml-bz-wx-foot {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 4px;
+  font-size: 10.5px;
+  color: var(--ml-tertiary);
+}
+.ml-bz-wx-foot b { font-weight: 600; color: var(--ml-muted); }
+
+/* 神煞 / 关系 */
+.ml-bz-extra {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ml-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.ml-bz-chiprow {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+.ml-bz-chiprow > em {
+  font-style: normal;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--ml-tertiary);
+}
+.ml-bz-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 12px;
+  font-size: 10.5px;
+  color: var(--ml-tertiary);
+}
+.ml-bz-notes b { font-weight: 600; color: var(--ml-muted); }
+
+/* ==========================================================================
+   ChartZiwei · 4×4 十二宫
+   ========================================================================== */
+.ml-zw-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin: 0 0 12px;
+  font-size: 11.5px;
+  color: var(--ml-muted);
+}
+.ml-zw-meta .ml-k { margin-right: 4px; color: var(--ml-tertiary); letter-spacing: 0.06em; }
+.ml-zw-meta b { font-weight: 600; color: var(--ml-ink); }
+.ml-zw-meta .ml-gold-text { color: var(--ml-gold); font-weight: 600; }
+
+.ml-zw-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(112px, auto));
+  border: 1px solid var(--ml-line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--ml-surface);
+}
+.ml-zw-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 7px 10px 6px;
+  border: 0;
+  border-right: 1px solid var(--ml-hairline);
+  border-bottom: 1px solid var(--ml-hairline);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.14s ease, box-shadow 0.14s ease;
+}
+.ml-zw-cell:nth-child(4n) { border-right: 0; }
+.ml-zw-cell:nth-child(n + 9) { border-bottom: 0; }
+.ml-zw-cell:hover { background: var(--ml-hover); }
+.ml-zw-cell.is-soul {
+  background: linear-gradient(158deg, color-mix(in srgb, var(--ml-gold) 13%, transparent), transparent 68%);
+}
+.ml-zw-cell.is-body { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ml-gold) 24%, transparent); }
+.ml-zw-cell.is-active {
+  background: var(--ml-active);
+  box-shadow: inset 0 0 0 1.5px var(--ml-gold);
+  z-index: 1;
+}
+.ml-zw-cell:focus-visible { outline: 2px solid var(--ml-gold); outline-offset: -2px; }
+.ml-zw-top { display: flex; align-items: baseline; gap: 5px; min-width: 0; }
+.ml-zw-name {
+  font-family: var(--ml-serif);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ml-ink);
+  white-space: nowrap;
+}
+.ml-zw-flag {
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+.ml-zw-flag--soul { background: var(--ml-gold); color: #fffaf0; }
+.ml-zw-flag--body {
+  border: 1px solid var(--ml-gold-line);
+  background: var(--ml-surface);
+  color: var(--ml-gold);
+}
+.ml-zw-gz {
+  margin-left: auto;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ml-tertiary);
+  white-space: nowrap;
+}
+.ml-zw-stars {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 2px 8px;
+  min-height: 20px;
+}
+.ml-zw-star {
+  display: inline-flex;
+  align-items: flex-start;
+  font-family: var(--ml-serif);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+.ml-zw-star sup {
+  margin: -1px 0 0 1px;
+  font-family: var(--dsw-font-family, sans-serif);
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--ml-tertiary);
+}
+.ml-mut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin: 1px 0 0 3px;
+  border-radius: 50%;
+  font-family: var(--dsw-font-family, sans-serif);
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+  align-self: center;
+}
+.ml-mut--lu { background: var(--ml-jade); }
+.ml-mut--quan { background: var(--ml-indigo); }
+.ml-mut--ke { background: var(--ml-violet); }
+.ml-mut--ji { background: var(--ml-cinnabar); }
+.ml-zw-minor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px 7px;
+  font-size: 10.5px;
+  color: var(--ml-muted);
+}
+.ml-zw-minor sup { font-size: 8.5px; color: var(--ml-tertiary); }
+.ml-zw-empty { font-size: 12px; letter-spacing: 0.08em; color: var(--ml-tertiary); }
+.ml-zw-opposite { font-size: 10px; color: var(--ml-tertiary); }
+.ml-zw-opposite b { font-weight: 600; color: var(--ml-muted); }
+.ml-zw-bot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1px 8px;
+  margin-top: auto;
+  padding-top: 2px;
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+  color: var(--ml-tertiary);
+}
+.ml-zw-bot .ml-zw-dec { color: var(--ml-muted); }
+
+.ml-zw-center {
+  grid-area: 2 / 2 / 4 / 4;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 11px 14px;
+  border-right: 1px solid var(--ml-hairline);
+  border-bottom: 1px solid var(--ml-hairline);
+  background: var(--ml-paper-2);
+  min-width: 0;
+}
+.ml-zw-center-title {
+  font-family: var(--ml-serif);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--ml-muted);
+  text-align: center;
+}
+.ml-zw-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 16px;
+}
+.ml-zw-fact { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.ml-zw-fact dt { font-size: 9.5px; letter-spacing: 0.12em; color: var(--ml-tertiary); }
+.ml-zw-fact dd {
+  margin: 0;
+  font-family: var(--ml-serif);
+  font-size: 13px;
+  color: var(--ml-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ml-zw-center-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  align-items: baseline;
+  font-size: 11px;
+  color: var(--ml-muted);
+}
+.ml-zw-center-line em {
+  font-style: normal;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--ml-tertiary);
+}
+.ml-zw-center-line b { font-weight: 600; color: var(--ml-ink); }
+.ml-zw-sihua { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; margin-top: auto; }
+.ml-zw-sihua-item { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; }
+
+.ml-zw-detail {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ml-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ml-zw-detail-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.ml-zw-detail-name { font-family: var(--ml-serif); font-size: 15px; font-weight: 600; letter-spacing: 0.08em; }
+.ml-zw-detail-name i { margin-left: 6px; font-style: normal; font-size: 10.5px; color: var(--ml-tertiary); }
+.ml-zw-detail-hint {
+  margin-left: auto;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ml-tertiary);
+}
+.ml-zw-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 26px;
+}
+.ml-zw-field {
+  display: grid;
+  grid-template-columns: 66px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  font-size: 11.5px;
+  color: var(--ml-ink);
+}
+.ml-zw-field > em {
+  font-style: normal;
+  padding-top: 1px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ml-tertiary);
+}
+.ml-zw-ages { display: flex; flex-wrap: wrap; gap: 3px; }
+.ml-zw-age {
+  padding: 0 5px 1px;
+  border: 1px solid var(--ml-hairline);
+  border-radius: 4px;
+  background: var(--ml-paper-2);
+  font-size: 10px;
+  color: var(--ml-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ml-zw-age.is-now { border-color: var(--ml-gold-line); background: var(--ml-gold-soft); color: var(--ml-gold); font-weight: 600; }
+.ml-zw-empty-cell { color: var(--ml-tertiary); }
+
+/* ==========================================================================
+   ChartQimen · 洛书九宫
+   ========================================================================== */
+.ml-qm-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 12px;
+  margin-bottom: 14px;
+  padding: 8px 11px;
+  border: 1px solid var(--ml-hairline);
+  border-radius: 10px;
+  background: var(--ml-paper-2);
+  font-size: 11.5px;
+  color: var(--ml-muted);
+}
+.ml-qm-top .ml-k { margin-right: 4px; color: var(--ml-tertiary); letter-spacing: 0.08em; }
+.ml-qm-top b { font-weight: 600; color: var(--ml-ink); }
+.ml-qm-ju {
+  padding: 1px 10px 2px;
+  border: 1px solid var(--ml-gold-line);
+  border-radius: 999px;
+  background: var(--ml-gold-soft);
+  font-family: var(--ml-serif);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: var(--ml-gold);
+}
+.ml-qm-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(126px, 1fr));
+  gap: 8px;
+}
+.ml-qm-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 9px 11px 8px;
+  border: 1px solid var(--ml-line);
+  border-radius: 9px;
+  background: var(--ml-surface);
+}
+.ml-qm-cell--center { background: var(--ml-paper-2); }
+.ml-qm-cell--zhifu {
+  border-color: var(--ml-gold);
+  background: linear-gradient(152deg, var(--ml-gold-soft), var(--ml-surface) 62%);
+  box-shadow: 0 0 0 1px var(--ml-gold-line), 0 0 14px color-mix(in srgb, var(--ml-gold) 12%, transparent);
+}
+.ml-qm-cell--zhishi::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid var(--ml-indigo);
+  border-radius: 6px;
+  opacity: 0.75;
+  pointer-events: none;
+}
+.ml-qm-cell--void {
+  background: color-mix(in srgb, var(--ml-cinnabar) 3.5%, var(--ml-surface));
+  border-color: color-mix(in srgb, var(--ml-cinnabar) 20%, var(--ml-line));
+}
+.ml-qm-head { display: flex; align-items: baseline; gap: 6px; }
+.ml-qm-gong { font-family: var(--ml-serif); font-size: 13px; letter-spacing: 0.06em; color: var(--ml-ink); white-space: nowrap; }
+.ml-qm-dir { margin-left: auto; font-size: 10px; letter-spacing: 0.08em; color: var(--ml-tertiary); white-space: nowrap; }
+.ml-qm-gans { display: flex; align-items: flex-end; gap: 14px; padding: 1px 0 3px; }
+.ml-qm-gan { display: flex; align-items: flex-end; gap: 4px; line-height: 1; }
+.ml-qm-gan em {
+  padding-bottom: 3px;
+  font-style: normal;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--ml-tertiary);
+}
+.ml-qm-gan b { font-family: var(--ml-serif); font-size: 27px; font-weight: 600; line-height: 1; }
+.ml-qm-gan--di b { font-size: 21px; }
+.ml-qm-gan small { padding-bottom: 3px; font-size: 10.5px; color: var(--ml-tertiary); }
+.ml-qm-rows { display: flex; flex-direction: column; gap: 2px; font-size: 11.5px; color: var(--ml-ink); }
+.ml-qm-row { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.ml-qm-row em {
+  flex: none;
+  width: 26px;
+  font-style: normal;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--ml-tertiary);
+}
+.ml-qm-row .wxi {
+  margin-left: auto;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--ml-tertiary);
+  white-space: nowrap;
+}
+.ml-qm-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; padding-top: 2px; }
+.ml-qm-tag {
+  padding: 0 6px 1px;
+  border: 1px solid var(--ml-line);
+  border-radius: 4px;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--ml-muted);
+}
+.ml-qm-tag--fu { border-color: var(--ml-gold-line); background: var(--ml-gold-soft); color: var(--ml-gold); }
+.ml-qm-tag--shi { border-color: color-mix(in srgb, var(--ml-indigo) 42%, transparent); color: var(--ml-indigo); }
+.ml-qm-tag--kong { border-color: color-mix(in srgb, var(--ml-cinnabar) 42%, transparent); color: var(--ml-cinnabar); }
+.ml-qm-yongshen {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ml-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ml-qm-ys {
+  display: grid;
+  grid-template-columns: 96px minmax(150px, 0.9fr) minmax(0, 1.6fr);
+  gap: 4px 14px;
+  align-items: baseline;
+  font-size: 11.5px;
+}
+.ml-qm-ys-tag {
+  justify-self: start;
+  padding: 0 8px 1px;
+  border: 1px solid var(--ml-line);
+  border-radius: 999px;
+  font-size: 10.5px;
+  color: var(--ml-muted);
+  white-space: nowrap;
+}
+.ml-qm-ys-main b { font-weight: 600; color: var(--ml-ink); }
+.ml-qm-ys-main i { font-style: normal; margin-left: 6px; font-size: 10.5px; color: var(--ml-tertiary); }
+.ml-qm-ys-why { font-size: 10.5px; line-height: 1.6; color: var(--ml-tertiary); }
+
+/* ==========================================================================
+   ChartDayun · 大运 / 流年
+   ========================================================================== */
+.ml-dy-qiyun {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 14px;
+  margin-bottom: 16px;
+  font-size: 11.5px;
+  color: var(--ml-muted);
+}
+.ml-dy-tag {
+  padding: 1px 9px 2px;
+  border: 1px solid var(--ml-gold-line);
+  border-radius: 999px;
+  background: var(--ml-gold-soft);
+  font-family: var(--ml-serif);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--ml-gold);
+}
+.ml-dy-qiyun b { font-weight: 600; color: var(--ml-ink); }
+.ml-dy-qiyun .ml-rule { margin-left: auto; font-size: 10px; color: var(--ml-tertiary); }
+.ml-dy-rail { position: relative; height: 16px; margin: 0 2px 7px; }
+.ml-dy-rail-line {
+  position: absolute;
+  left: 4px;
+  right: 0;
+  top: 8px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--ml-gold-line), var(--ml-line) 55%, var(--ml-hairline));
+}
+.ml-dy-rail-dot {
+  position: absolute;
+  left: 0;
+  top: 3px;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--ml-gold);
+  border-radius: 50%;
+  background: var(--ml-surface);
+}
+.ml-dy-rail-label {
+  position: absolute;
+  left: 16px;
+  top: 0;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--ml-gold);
+}
+.ml-dy-axis {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+}
+.ml-dy-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 10px 4px 8px;
+  border: 1px solid var(--ml-line);
+  border-radius: 8px;
+  background: var(--ml-surface);
+  overflow: hidden;
+  text-align: center;
+}
+.ml-dy-step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ml-wx-color, var(--ml-gold));
+  opacity: 0.7;
+}
+.ml-dy-step.is-now {
+  border-color: var(--ml-gold);
+  background: linear-gradient(180deg, var(--ml-gold-soft), var(--ml-surface) 72%);
+  box-shadow: 0 0 0 1px var(--ml-gold-line);
+}
+.ml-dy-gz {
+  font-family: var(--ml-serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+}
+.ml-dy-age { font-size: 10.5px; color: var(--ml-muted); font-variant-numeric: tabular-nums; }
+.ml-dy-year { font-size: 9.5px; color: var(--ml-tertiary); font-variant-numeric: tabular-nums; }
+.ml-dy-ss { margin-top: 2px; font-size: 10px; letter-spacing: 0.04em; color: var(--ml-muted); }
+.ml-dy-nowtag {
+  position: absolute;
+  top: 5px;
+  right: 4px;
+  padding: 0 3px;
+  border: 1px solid var(--ml-gold-line);
+  border-radius: 3px;
+  background: var(--ml-surface);
+  font-size: 8px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--ml-gold);
+}
+.ml-dy-liunian-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 18px 0 8px;
+}
+.ml-dy-liunian-head .ml-hint { margin-left: auto; font-size: 10px; color: var(--ml-tertiary); }
+.ml-dy-liunian {
+  display: grid;
+  grid-template-columns: repeat(11, minmax(0, 1fr));
+  gap: 4px;
+  padding-top: 6px;
+  position: relative;
+}
+.ml-dy-liunian::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--ml-line);
+}
+.ml-dy-year-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 7px 1px 6px;
+  border: 1px solid var(--ml-hairline);
+  border-radius: 6px;
+  background: var(--ml-paper-2);
+  text-align: center;
+  min-width: 0;
+}
+.ml-dy-year-cell::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 1px;
+  height: 6px;
+  background: var(--ml-line);
+}
+.ml-dy-year-cell.is-now {
+  border-color: var(--ml-gold);
+  background: var(--ml-gold-soft);
+  box-shadow: 0 0 0 1px var(--ml-gold-line);
+}
+.ml-dy-year-cell.is-now::before { background: var(--ml-gold); }
+.ml-dy-ly-year { font-size: 9.5px; letter-spacing: 0.02em; color: var(--ml-tertiary); font-variant-numeric: tabular-nums; }
+.ml-dy-ly-gz { font-family: var(--ml-serif); font-size: 13px; font-weight: 600; line-height: 1.3; }
+.ml-dy-ly-age { font-size: 9px; color: var(--ml-tertiary); font-variant-numeric: tabular-nums; }
+.ml-dy-ly-ss { font-size: 9px; letter-spacing: 0.02em; color: var(--ml-muted); }
+.ml-dy-ly-now {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  padding: 0 3px;
+  border-radius: 3px;
+  background: var(--ml-gold);
+  font-size: 8px;
+  line-height: 1.4;
+  color: #fffaf0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.ml-dy-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--ml-tertiary);
+}
+
+/* ==========================================================================
+   Narrow layouts (panel is ~1000px wide; phones collapse to one column)
+   ========================================================================== */
+@media (max-width: 900px) {
+  .ml-chart { padding: 14px 12px; }
+  .ml-bz-wx { grid-template-columns: minmax(0, 1fr); }
+  .ml-bz-radar { max-width: 280px; }
+  .ml-zw-board { grid-template-rows: repeat(4, minmax(104px, auto)); }
+  .ml-zw-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ml-zw-detail-grid { grid-template-columns: minmax(0, 1fr); }
+  .ml-qm-board { grid-template-rows: repeat(3, minmax(112px, auto)); }
+  .ml-qm-ys { grid-template-columns: 96px minmax(0, 1fr); }
+  .ml-qm-ys-why { grid-column: 1 / -1; }
+  .ml-dy-axis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ml-dy-liunian { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .ml-bz-table { grid-template-columns: 40px repeat(4, minmax(0, 1fr)); }
+  .ml-bz-ch { font-size: 25px; }
+  .ml-bz-ch--zhi { font-size: 23px; }
+  .ml-bz-subs { grid-template-columns: minmax(0, 1fr); }
+  .ml-zw-board { grid-template-rows: repeat(4, minmax(96px, auto)); }
+  .ml-zw-stars { gap: 1px 5px; }
+  .ml-zw-star { font-size: 12.5px; }
+  .ml-dy-axis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ml-dy-liunian { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
